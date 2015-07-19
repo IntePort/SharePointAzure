@@ -374,7 +374,6 @@
                     "public": {
                         "fileUris": [
                             "https://wwprovisioningfiles.blob.core.windows.net/scripts/Common.ps1",
-                            //"https://wwprovisioningfiles.blob.core.windows.net/scripts/Common.ps1",
                             "https://azuregalleryassetsch.blob.core.windows.net/microsoft-sharepoint-sql-0-3-0-preview/Common.ps1",
                             "https://wwprovisioningfiles.blob.core.windows.net/scripts/xComputerManagement.zip",
                             "https://wwprovisioningfiles.blob.core.windows.net/scripts/xSqlPs.zip"
