@@ -26,7 +26,7 @@
         }
     },
     "variables": {
-        "ServiceName":"[toLower(resourceGroup().name)]",
+        "ServiceName": "[toLower(resourceGroup().name)]",
         "DCDomainName": "[concat(variables('ServiceName'),'-DC')]",
         "SPDomainName": "[concat(variables('ServiceName'),'-SP')]",
         "StorageType": "Standard_LRS",
@@ -43,8 +43,9 @@
         "SP1Disk3Name": "[concat(variables('ServiceName'),'-SP1-data2')]",
         "SPPrepareMachineModules": "\"xComputerManagement\",\"xNetworking\",\"xActiveDirectory\",\"xSQLServer_1.2.1.0\"",
         "DCPrepareMachineModules": "\"xComputerManagement\",\"xActiveDirectory\"",
-        "DCImage": "a699494373c04fc0bc8f2bb1389d6106__Windows-Server-2012-R2-201502.01-en.us-127GB.vhd",
-        "SPImage": "03f55de797f546a1b29d1b8d66be687a__Visual-Studio-2013-Ultimate-Update4-AzureSDK-2.5-WS2012-201502.23",
+        "DCImage": "a699494373c04fc0bc8f2bb1389d6106__Windows-Server-2012-R2-201504.01-en.us-127GB.vhd",
+        //"SPImage": "03f55de797f546a1b29d1b8d66be687a__Visual-Studio-2013-Ultimate-Update4-AzureSDK-2.5-WS2012-201502.23",
+        "SPImage": "03f55de797f546a1b29d1b8d66be687a__Visual-Studio-2015-Professional-RC-AzureSDK-2.6-WS2012R2-201505.26",
         "CreateADPrimaryDomainControllerCommand": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\CreateADPrimaryDomainController.ps1 -DomainName \"',parameters('domainName'),'\" -DomainNetBiosName \"',parameters('domainNetBiosName'),'\" -UserName \"',parameters('administratorAccount'),'\" -Password \"',parameters('administratorPassword'), '\" ')]",
         "CreateSPCommand": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\CreateSPServer.ps1 -DomainName \"',parameters('domainName'),'\" -domainNetBiosName \"',parameters('domainNetBiosName'),'\" -DomainAdministratorUserName \"',parameters('administratorAccount'),'\" -DomainAdministratorPassword \"',parameters('administratorPassword'), '\" -ServiceUserName \"SQLService\" -ServicePassword \"',parameters('servicePassword'), '\"')]",
         "SetupSQLCommand": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\SetupSQL.ps1 -DomainNetBiosName \"',parameters('domainNetBiosName'),'\" -SQLServiceAccount \"SQLService\" -SQLServiceAccountPassword \"',parameters('servicePassword'), '\" -SQLAgentAccount \"SQLAgent\" -SQLAgentAccountPassword \"',parameters('servicePassword'), '\" -SQLDrive  \"F\"  -SetupAccount \"SPSetup\"')]",
