@@ -4,7 +4,6 @@
     "parameters": {
         //"ServiceName": {
         //    "type": "String",
-        //    "defaultValue": "[resourceGroup().name]"
         //},
         "siteLocation": {
             "type": "string"
@@ -26,8 +25,8 @@
         }
     },
     "variables": {
-        //"ServiceName": "intservtest",
-        "ServiceName": "[toLower(resourceGroup().name)]",
+        "ServiceName": "intservtest",
+        //"ServiceName": "[toLower(resourceGroup().name)]",
         "DCDomainName": "[concat(variables('ServiceName'),'-DC')]",
         "SPDomainName": "[concat(variables('ServiceName'),'-SP')]",
         "StorageType": "Standard_LRS",
@@ -405,7 +404,6 @@
                 "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('SP1Name'))]"
             ]
         },
-
         {
             "type": "Microsoft.ClassicCompute/virtualMachines/extensions",
             "properties": {
