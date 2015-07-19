@@ -133,8 +133,7 @@
                 },
                 "hardwareProfile": {
                     "size": "[variables('DCHardware')]",
-                    "platformGuestAgent": "true",
-                    "availabilitySet": "[concat(variables('ServiceName'),'-DC-AvailSet')]"
+                    "platformGuestAgent": "true"
                 },
                 "operatingSystemProfile": {
                     "computerName": "[variables('DC1Name')]",
@@ -292,8 +291,7 @@
                 },
                 "hardwareProfile": {
                     "size": "[variables('SPHardware')]",
-                    "platformGuestAgent": "true",
-                    "availabilitySet": "[concat(variables('ServiceName'),'AvailSet')]"
+                    "platformGuestAgent": "true"
                 },
                 "operatingSystemProfile": {
                     "computerName": "[variables('SP1Name')]",
