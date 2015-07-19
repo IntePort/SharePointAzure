@@ -6,9 +6,6 @@
         //    "type": "String",
         //    "defaultValue": "[resourceGroup().name]"
         //},
-        "sqlAdministratorLogin": {
-            "type": "string"
-        },
         "siteLocation": {
             "type": "string"
         },
