@@ -52,7 +52,7 @@
 
     },
     "resources": [
-         {
+        {
             "type": "Microsoft.ClassicStorage/StorageAccounts",
             "name": "[variables('StorageName')]",
             "apiVersion": "2014-06-01",
@@ -216,19 +216,26 @@
                         "extension": "BGInfo",
                         "publisher": "Microsoft.Compute",
                         "version": "1.*"
-                    }, {
+                    },
+                    {
                         "extension": "CustomScriptExtension",
                         "publisher": "Microsoft.Compute",
                         "version": "1.*",
                         "parameters": {
                             "public": {
                                 "fileUris": [
-                                   "https://wwprovisioningfiles.blob.core.windows.net/scripts/PrepareMachine.ps1",
-                                   "https://wwprovisioningfiles.blob.core.windows.net/scripts/xComputerManagement.zip",
-                                   "https://wwprovisioningfiles.blob.core.windows.net/scripts/xActiveDirectory.zip",
-                                   "https://wwprovisioningfiles.blob.core.windows.net/scripts/xSQLServer_1.2.1.0.zip"
+                                    //"https://wwprovisioningfiles.blob.core.windows.net/scripts/PrepareMachine.ps1",
+                                    //"https://wwprovisioningfiles.blob.core.windows.net/scripts/xComputerManagement.zip",
+                                    //"https://wwprovisioningfiles.blob.core.windows.net/scripts/xActiveDirectory.zip",
+                                    //"https://wwprovisioningfiles.blob.core.windows.net/scripts/xSQLServer_1.2.1.0.zip"
+                                    "https://azuregalleryassetsch.blob.core.windows.net/microsoft-sharepoint-sql-0-3-0-preview/Common.ps1",
+                                    "https://azuregalleryassetsch.blob.core.windows.net/microsoft-sharepoint-sql-0-3-0-preview/CreateADPrimaryDomainController.ps1"
+
                                 ],
-                                "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\PrepareMachine.ps1 -Modules ', variables('DCPrepareMachineModules'),' -Force')]"
+                                //"commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\PrepareMachine.ps1 -Modules ', variables('DCPrepareMachineModules'),' -Force')]"
+                                "commandToExecute": "[variables('CreateADPrimaryDomainControllerCommand')]"
+
+
                             }
                         }
                     }
@@ -304,7 +311,7 @@
                 "operatingSystemProfile": {
                     "computerName": "[variables('SP1Name')]",
                     "adminUserName": "[parameters('administratorAccount')]",
-                    "adminPassword": "[parameters('administratorPassword')]",                   
+                    "adminPassword": "[parameters('administratorPassword')]",
                     "windowsOperatingSystemProfile": {
                         "winRMListeners": [
                             {
@@ -351,12 +358,12 @@
                         "version": "1.*",
                         "parameters": {
                             "public": {
-                                "fileUris":[  
-                                   "https://wwprovisioningfiles.blob.core.windows.net/scripts/PrepareMachine.ps1",
-                                   "https://wwprovisioningfiles.blob.core.windows.net/scripts/xComputerManagement.zip",
-                                   "https://wwprovisioningfiles.blob.core.windows.net/scripts/xNetworking.zip",
-                                   "https://wwprovisioningfiles.blob.core.windows.net/scripts/xActiveDirectory.zip",
-                                   "https://wwprovisioningfiles.blob.core.windows.net/scripts/xSQLServer_1.2.1.0.zip"
+                                "fileUris": [
+                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/PrepareMachine.ps1",
+                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/xComputerManagement.zip",
+                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/xNetworking.zip",
+                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/xActiveDirectory.zip",
+                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/xSQLServer_1.2.1.0.zip"
                                 ],
                                 "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\PrepareMachine.ps1 -Modules ', variables('SPPrepareMachineModules'),' -Force')]"
                             }
@@ -366,7 +373,7 @@
                 ]
             },
             "dependsOn": [
-               "[concat('Microsoft.ClassicCompute/domainNames/', variables('SPDomainName'))]",
+                "[concat('Microsoft.ClassicCompute/domainNames/', variables('SPDomainName'))]",
                 "[concat('Microsoft.ClassicNetwork/virtualNetworks/', variables('VNetName'))]",
                 "[concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))]"
             ]
@@ -397,7 +404,7 @@
                 "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('SP1Name'))]"
             ]
         },
-        
+
         {
             "type": "Microsoft.ClassicCompute/virtualMachines/extensions",
             "properties": {
