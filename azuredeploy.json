@@ -26,6 +26,7 @@
         }
     },
     "variables": {
+        //"ServiceName": "intservtest",
         "ServiceName": "[toLower(resourceGroup().name)]",
         "DCDomainName": "[concat(variables('ServiceName'),'-DC')]",
         "SPDomainName": "[concat(variables('ServiceName'),'-SP')]",
@@ -139,7 +140,7 @@
                 },
                 "hardwareProfile": {
                     "size": "[variables('DCHardware')]",
-                    "platformGuestAgent": "true",
+                    "platformGuestAgent": "true"//,
                     //"availabilitySet": "[concat(variables('ServiceName'),'-DC-AvailSet')]"
                 },
                 "operatingSystemProfile": {
@@ -305,7 +306,7 @@
                 },
                 "hardwareProfile": {
                     "size": "[variables('SPHardware')]",
-                    "platformGuestAgent": "true",
+                    "platformGuestAgent": "true"//,
                     //"availabilitySet": "[concat(variables('ServiceName'),'AvailSet')]"
                 },
                 "operatingSystemProfile": {
