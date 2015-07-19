@@ -217,13 +217,11 @@
                         "parameters": {
                             "public": {
                                 "fileUris": [
-                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/PrepareMachine.ps1",
-                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/xComputerManagement.zip",
-                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/xActiveDirectory.zip",
-                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/xSQLServer_1.2.1.0.zip"
-                                ],
-                                "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\PrepareMachine.ps1 -Modules ', variables('DCPrepareMachineModules'),' -Force')]"
-                            }
+                            "https://azuregalleryassetsch.blob.core.windows.net/microsoft-sharepoint-sql-0-3-0-preview/Common.ps1",
+                            "https://azuregalleryassetsch.blob.core.windows.net/microsoft-sharepoint-sql-0-3-0-preview/CreateADPrimaryDomainController.ps1"
+                        ],
+                        "commandToExecute": "[variables('CreateADPrimaryDomainControllerCommand')]"
+                    }
                         }
                     }
 
@@ -234,29 +232,6 @@
                 "[concat('Microsoft.ClassicNetwork/virtualNetworks/', variables('VNetName'))]",
                 "[concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))]"
 
-            ]
-        },
-        {
-            "type": "Microsoft.ClassicCompute/virtualMachines/extensions",
-            "properties": {
-                "extension": "CustomScriptExtension",
-                "publisher": "Microsoft.Compute",
-                "version": "1.*",
-                "parameters": {
-                    "public": {
-                        "fileUris": [
-                            "https://azuregalleryassetsch.blob.core.windows.net/microsoft-sharepoint-sql-0-3-0-preview/Common.ps1",
-                            "https://azuregalleryassetsch.blob.core.windows.net/microsoft-sharepoint-sql-0-3-0-preview/CreateADPrimaryDomainController.ps1"
-                        ],
-                        "commandToExecute": "[variables('CreateADPrimaryDomainControllerCommand')]"
-                    }
-                }
-            },
-            "apiVersion": "2014-06-01",
-            "name": "[concat(variables('DC1Name'),'/CreateADPrimaryDomainControllerCustomScript')]",
-            "location": "[parameters('siteLocation')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('DC1Name'))]"
             ]
         },
         {
