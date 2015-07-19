@@ -235,7 +235,7 @@
                 "[concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))]"
 
             ]
-        }
+        },
         {
             "type": "Microsoft.ClassicCompute/virtualMachines/extensions",
             "properties": {
@@ -254,9 +254,10 @@
             },
             "apiVersion": "2014-06-01",
             "name": "[concat(variables('DC1Name'),'/CreateADPrimaryDomainControllerCustomScript')]",
-            "location": "[parameters('resourceLocation')]",
+            "location": "[parameters('siteLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('DC1Name'))]"
             ]
-        }    ]
+        } 
+    ]
 }
