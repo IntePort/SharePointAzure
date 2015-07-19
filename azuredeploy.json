@@ -5,7 +5,7 @@
         "ServiceName": {
             "type": "String"
         },
-        "resourceLocation": {
+        "siteLocation": {
             "type": "string"
         },
         "administratorAccount": {
@@ -54,7 +54,7 @@
             "type": "Microsoft.ClassicStorage/StorageAccounts",
             "name": "[variables('StorageName')]",
             "apiVersion": "2014-06-01",
-            "location": "[parameters('resourceLocation')]",
+            "location": "[parameters('siteLocation')]",
             "properties": {
                 "accountType": "[variables('StorageType')]"
             }
@@ -63,7 +63,7 @@
             "type": "Microsoft.ClassicNetwork/virtualNetworks",
             "name": "[variables('VNetName')]",
             "apiVersion": "2014-06-01",
-            "location": "[parameters('resourceLocation')]",
+            "location": "[parameters('siteLocation')]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -89,7 +89,7 @@
             "type": "Microsoft.ClassicCompute/domainNames",
             "name": "[variables('DCDomainName')]",
             "apiVersion": "2014-06-01",
-            "location": "[parameters('resourceLocation')]",
+            "location": "[parameters('siteLocation')]",
             "properties": {
                 "label": "[variables('DCDomainName')]"
             }
@@ -98,7 +98,7 @@
             "type": "Microsoft.ClassicCompute/domainNames",
             "name": "[variables('SPDomainName')]",
             "apiVersion": "2014-06-01",
-            "location": "[parameters('resourceLocation')]",
+            "location": "[parameters('siteLocation')]",
             "properties": {
                 "label": "[variables('SPDomainName')]"
             }
@@ -107,7 +107,7 @@
             "type": "Microsoft.ClassicCompute/virtualMachines",
             "name": "[variables('DC1Name')]",
             "apiVersion": "2014-06-01",
-            "location": "[parameters('resourceLocation')]",
+            "location": "[parameters('siteLocation')]",
             "properties": {
                 "domainName": {
                     "id": "[concat(resourceGroup().id, '/providers/Microsoft.ClassicCompute/domainNames/', variables('DCDomainName'))]"
@@ -258,7 +258,7 @@
             },
             "apiVersion": "2014-06-01",
             "name": "[concat(variables('DC1Name'),'/CreateADPrimaryDomainControllerCustomScript')]",
-            "location": "[parameters('resourceLocation')]",
+            "location": "[parameters('siteLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('DC1Name'))]"
             ]
@@ -267,7 +267,7 @@
             "type": "Microsoft.ClassicCompute/virtualMachines",
             "name": "[variables('SP1Name')]",
             "apiVersion": "2014-06-01",
-            "location": "[parameters('resourceLocation')]",
+            "location": "[parameters('siteLocation')]",
             "properties": {
                 "domainName": {
                     "id": "[concat(resourceGroup().id, '/providers/Microsoft.ClassicCompute/domainNames/', variables('SPDomainName'))]"
@@ -389,7 +389,7 @@
             },
             "apiVersion": "2014-06-01",
             "name": "[concat(variables('SP1Name'),'/CreateSPCommand')]",
-            "location": "[parameters('resourceLocation')]",
+            "location": "[parameters('siteLocation')]",
             "dependsOn": [
                 "[concat('Microsoft.ClassicCompute/virtualMachines/',variables('DC1Name'),'/extensions/CreateADPrimaryDomainControllerCustomScript')]",
                 "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('SP1Name'))]"
@@ -414,7 +414,7 @@
                 }
             },
             "apiVersion": "2014-06-01",
-            "location": "[parameters('resourceLocation')]",
+            "location": "[parameters('siteLocation')]",
             "name": "[concat(variables('SP1Name'),'/SetupSPCommand')]",
             "dependsOn": [
                 "[concat('Microsoft.ClassicCompute/virtualMachines/',variables('SP1Name'),'/extensions/CreateSPCommand')]"
