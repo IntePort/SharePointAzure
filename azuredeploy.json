@@ -26,7 +26,7 @@
         }
     },
     "variables": {
-        "ServiceName":"[resourceGroup().name.ToLowerCase()]",
+        "ServiceName":"[toLower(resourceGroup().name)]",
         "DCDomainName": "[concat(variables('ServiceName'),'-DC')]",
         "SPDomainName": "[concat(variables('ServiceName'),'-SP')]",
         "StorageType": "Standard_LRS",
