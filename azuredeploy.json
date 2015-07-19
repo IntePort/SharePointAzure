@@ -2,10 +2,10 @@
     "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "ServiceName": {
-            "type": "String",
-            "defaultValue": "[resourceGroup().name]"
-        },
+        //"ServiceName": {
+        //    "type": "String",
+        //    "defaultValue": "[resourceGroup().name]"
+        //},
         "resourceLocation": {
             "type": "string"
         },
@@ -26,21 +26,21 @@
         }
     },
     "variables": {
-        //"ServiceName":"[resourceGroup().id]",
-        "DCDomainName": "[concat(parameters('ServiceName'),'-DC')]",
-        "SPDomainName": "[concat(parameters('ServiceName'),'-SP')]",
+        "ServiceName":"[resourceGroup().name]",
+        "DCDomainName": "[concat(variables('ServiceName'),'-DC')]",
+        "SPDomainName": "[concat(variables('ServiceName'),'-SP')]",
         "StorageType": "Standard_LRS",
         "DCHardware": "Basic_A0",
         "SPHardware": "Basic_A4",
-        "StorageName": "[concat(parameters('ServiceName'),'storage')]",
-        "VNetName": "[concat(parameters('ServiceName'),'VNet')]",
-        "DC1Name": "[concat(parameters('ServiceName'),'-dc1')]",
-        "SP1Name": "[concat(parameters('ServiceName'),'-sp1')]",
-        "DC1Disk1Name": "[concat(parameters('ServiceName'),'-DC1-os')]",
-        "DC1Disk2Name": "[concat(parameters('ServiceName'),'-DC1-data')]",
-        "SP1Disk1Name": "[concat(parameters('ServiceName'),'-SP1-os')]",
-        "SP1Disk2Name": "[concat(parameters('ServiceName'),'-SP1-data1')]",
-        "SP1Disk3Name": "[concat(parameters('ServiceName'),'-SP1-data2')]",
+        "StorageName": "[concat(variables('ServiceName'),'storage')]",
+        "VNetName": "[concat(variables('ServiceName'),'VNet')]",
+        "DC1Name": "[concat(variables('ServiceName'),'-dc1')]",
+        "SP1Name": "[concat(variables('ServiceName'),'-sp1')]",
+        "DC1Disk1Name": "[concat(variables('ServiceName'),'-DC1-os')]",
+        "DC1Disk2Name": "[concat(variables('ServiceName'),'-DC1-data')]",
+        "SP1Disk1Name": "[concat(variables('ServiceName'),'-SP1-os')]",
+        "SP1Disk2Name": "[concat(variables('ServiceName'),'-SP1-data1')]",
+        "SP1Disk3Name": "[concat(variables('ServiceName'),'-SP1-data2')]",
         "SPPrepareMachineModules": "\"xComputerManagement\",\"xNetworking\",\"xActiveDirectory\",\"xSQLServer_1.2.1.0\"",
         "DCPrepareMachineModules": "\"xComputerManagement\",\"xActiveDirectory\"",
         "DCImage": "a699494373c04fc0bc8f2bb1389d6106__Windows-Server-2012-R2-201502.01-en.us-127GB.vhd",
@@ -140,7 +140,7 @@
                 "hardwareProfile": {
                     "size": "[variables('DCHardware')]",
                     "platformGuestAgent": "true",
-                    "availabilitySet": "[concat(parameters('ServiceName'),'-DC-AvailSet')]"
+                    "availabilitySet": "[concat(variables('ServiceName'),'-DC-AvailSet')]"
                 },
                 "operatingSystemProfile": {
                     "computerName": "[variables('DC1Name')]",
@@ -196,7 +196,7 @@
                 "storageProfile": {
                     "operatingSystemDisk": {
                         "diskName": "[variables('DC1Disk1Name')]",
-                        "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', parameters('ServiceName'), variables('DC1Disk1Name'),'.vhd')]",
+                        "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', variables('ServiceName'), variables('DC1Disk1Name'),'.vhd')]",
                         "caching": "ReadWrite",
                         "sourceImageName": "[variables('DCImage')]"
                     },
@@ -206,7 +206,7 @@
                             "caching": "None",
                             "diskSize": "120",
                             "lun": "0",
-                            "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', parameters('ServiceName'), variables('DC1Disk2Name'),'.vhd')]",
+                            "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', variables('ServiceName'), variables('DC1Disk2Name'),'.vhd')]",
                         }
                     ]
 
@@ -299,7 +299,7 @@
                 "hardwareProfile": {
                     "size": "[variables('SPHardware')]",
                     "platformGuestAgent": "true",
-                    "availabilitySet": "[concat(parameters('ServiceName'),'AvailSet')]"
+                    "availabilitySet": "[concat(variables('ServiceName'),'AvailSet')]"
                 },
                 "operatingSystemProfile": {
                     "computerName": "[variables('SP1Name')]",
@@ -317,7 +317,7 @@
                 "storageProfile": {
                     "operatingSystemDisk": {
                         "diskName": "[variables('SP1Disk1Name')]",
-                        "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', parameters('ServiceName'), variables('SP1Disk1Name'),'.vhd')]",
+                        "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', variables('ServiceName'), variables('SP1Disk1Name'),'.vhd')]",
                         "caching": "ReadWrite",
                         "sourceImageName": "[variables('SPImage')]"
                     },
@@ -327,14 +327,14 @@
                             "caching": "None",
                             "diskSize": "1023",
                             "lun": "0",
-                            "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', parameters('ServiceName'), variables('SP1Disk2Name'),'.vhd')]",
+                            "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', variables('ServiceName'), variables('SP1Disk2Name'),'.vhd')]",
                         },
                         {
                             "diskName": "[variables('SP1Disk3Name')]",
                             "caching": "None",
                             "diskSize": "1023",
                             "lun": "1",
-                            "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', parameters('ServiceName'), variables('SP1Disk3Name'),'.vhd')]",
+                            "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', variables('ServiceName'), variables('SP1Disk3Name'),'.vhd')]",
                         }
                     ]
 
