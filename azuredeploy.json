@@ -257,7 +257,7 @@
             "dependsOn": [
                 "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('DC1Name'))]"
             ]
-        } 
+        },
         {
         "type": "Microsoft.ClassicCompute/virtualMachines",
         "name": "[variables('SP1Name')]",
@@ -413,6 +413,6 @@
             "dependsOn": [
                 "[concat('Microsoft.ClassicCompute/virtualMachines/',variables('SP1Name'),'/extensions/CreateSPCommand')]"
             ]
-        },
+        }
     ]
 }
