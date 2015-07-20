@@ -388,7 +388,7 @@
                 "[concat('Microsoft.ClassicCompute/virtualMachines/',variables('DC1Name'),'/extensions/CreateADPrimaryDomainControllerCustomScript')]",
                 "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('SQL1Name'))]"
             ]
-        }
+        },
 
         {
             "type": "Microsoft.ClassicCompute/virtualMachines",
@@ -478,9 +478,7 @@
                                 "fileUris":[  
                                     "https://inteportprovisioning.blob.core.windows.net/scripts/PrepareMachine.ps1",
                                     "https://inteportprovisioning.blob.core.windows.net/scripts/xComputerManagement.zip",
-                                    "https://inteportprovisioning.blob.core.windows.net/scripts/xNetworking.zip",
-                                    "https://inteportprovisioning.blob.core.windows.net/scripts/xActiveDirectory.zip",
-                                    "https://inteportprovisioning.blob.core.windows.net/scripts/xSQLServer_1.2.1.0.zip"
+                                    "https://inteportprovisioning.blob.core.windows.net/scripts/xActiveDirectory.zip"
                                 ],
                                 "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\PrepareMachine.ps1 -Modules ', variables('SPPrepareMachineModules'),' -Force')]"
                             }
@@ -518,7 +516,7 @@
             "name": "[concat(variables('SP1Name'),'/CreateSPCommand')]",
             "location": "[parameters('siteLocation')]",
             "dependsOn": [
-                "[concat('Microsoft.ClassicCompute/virtualMachines/',variables('DC1Name'),'/extensions/CreateADPrimaryDomainControllerCustomScript')]",
+                "[concat('Microsoft.ClassicCompute/virtualMachines/',variables('SQL1Name'),'/extensions/CreateSQLCommand')]",
                 "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('SP1Name'))]"
             ]
         }
