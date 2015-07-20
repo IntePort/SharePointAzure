@@ -20,7 +20,7 @@
     },
     "variables": {
         "ServiceName": "[toLower(resourceGroup().name)]",
-        "servicePassword": "parameters('administratorPassword')",
+        "servicePassword": "[parameters('administratorPassword')]",
         "DCDomainName": "[concat(variables('ServiceName'),'-DC')]",
         "SPDomainName": "[concat(variables('ServiceName'),'-SP')]",
         "StorageType": "Standard_LRS",
@@ -291,8 +291,7 @@
             },
             "hardwareProfile": {
                 "size": "[variables('SPHardware')]",
-                "platformGuestAgent": "true",
-                "availabilitySet": "[concat(variables('ServiceName'),'AvailSet')]"
+                "platformGuestAgent": "true"
             },
             "operatingSystemProfile": {
                 "computerName": "[variables('SP1Name')]",
