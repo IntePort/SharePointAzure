@@ -26,7 +26,7 @@
         "SPDomainName": "[concat(variables('ServiceName'),'-SP')]",
         "StorageType": "Standard_LRS",
         "DCHardware": "Basic_A0",
-        "SQLHardware": "Basic_A0",
+        "SQLHardware": "Basic_A4",
         "SPHardware": "Basic_A4",
         "StorageName": "[concat(variables('ServiceName'),'storage')]",
         "VNetName": "[concat(variables('ServiceName'),'VNet')]",
@@ -35,8 +35,8 @@
         "SP1Name": "[concat(variables('ServiceName'),'-sp1')]",
         "DC1Disk1Name": "[concat(variables('ServiceName'),'-DC1-os')]",
         "DC1Disk2Name": "[concat(variables('ServiceName'),'-DC1-data')]",
-        "SQL1Disk1Name": "[concat(variables('ServiceName'),'-DC1-os')]",
-        "SQL1Disk2Name": "[concat(variables('ServiceName'),'-DC1-data')]",
+        "SQL1Disk1Name": "[concat(variables('ServiceName'),'-SQL1-os')]",
+        "SQL1Disk2Name": "[concat(variables('ServiceName'),'-SQL1-data')]",
         "SP1Disk1Name": "[concat(variables('ServiceName'),'-SP1-os')]",
         "SP1Disk2Name": "[concat(variables('ServiceName'),'-SP1-data1')]",
         "SP1Disk3Name": "[concat(variables('ServiceName'),'-SP1-data2')]",
@@ -103,7 +103,8 @@
             "properties": {
                 "label": "[variables('SQLDomainName')]"
             }
-        },        {
+        },
+        {
             "type": "Microsoft.ClassicCompute/domainNames",
             "name": "[variables('SPDomainName')]",
             "apiVersion": "2014-06-01",
@@ -250,6 +251,12 @@
         },
         {
             "type": "Microsoft.ClassicCompute/virtualMachines/extensions",
+            "apiVersion": "2014-06-01",
+            "name": "[concat(variables('DC1Name'),'/CreateADPrimaryDomainControllerCustomScript')]",
+            "location": "[parameters('siteLocation')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('DC1Name'))]"
+            ],
             "properties": {
                 "extension": "CustomScriptExtension",
                 "publisher": "Microsoft.Compute",
@@ -263,13 +270,7 @@
                         "commandToExecute": "[variables('CreateADPrimaryDomainControllerCommand')]"
                     }
                 }
-            },
-            "apiVersion": "2014-06-01",
-            "name": "[concat(variables('DC1Name'),'/CreateADPrimaryDomainControllerCustomScript')]",
-            "location": "[parameters('siteLocation')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('DC1Name'))]"
-            ]
+            }
         },
 
         {
@@ -366,7 +367,8 @@
             "dependsOn": [
                 "[concat('Microsoft.ClassicCompute/domainNames/', variables('SQLDomainName'))]",
                 "[concat('Microsoft.ClassicNetwork/virtualNetworks/', variables('VNetName'))]",
-                "[concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))]"
+                "[concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))]",
+                "[concat(variables('DC1Name'),'/CreateADPrimaryDomainControllerCustomScript')]"
 
             ]
         },
