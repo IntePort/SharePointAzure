@@ -368,7 +368,7 @@
                 "[concat('Microsoft.ClassicCompute/domainNames/', variables('SQLDomainName'))]",
                 "[concat('Microsoft.ClassicNetwork/virtualNetworks/', variables('VNetName'))]",
                 "[concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))]",
-                "[concat(variables('DC1Name'),'/CreateADPrimaryDomainControllerCustomScript')]"
+                "[concat('Microsoft.ClassicCompute/virtualMachines/',variables('DC1Name'),'/extensions/CreateADPrimaryDomainControllerCustomScript')]"
 
             ]
         },
