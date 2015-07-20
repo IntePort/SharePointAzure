@@ -22,32 +22,27 @@
         "ServiceName": "[toLower(resourceGroup().name)]",
         "servicePassword": "[parameters('administratorPassword')]",
         "DCDomainName": "[concat(variables('ServiceName'),'-DC')]",
-        "SQLDomainName": "[concat(variables('ServiceName'),'-SQL')]",
         "SPDomainName": "[concat(variables('ServiceName'),'-SP')]",
         "StorageType": "Standard_LRS",
         "DCHardware": "Basic_A0",
-        "SQLHardware": "Basic_A0",
         "SPHardware": "Basic_A4",
         "StorageName": "[concat(variables('ServiceName'),'storage')]",
         "VNetName": "[concat(variables('ServiceName'),'VNet')]",
         "DC1Name": "[concat(variables('ServiceName'),'-dc1')]",
-        "SQL1Name": "[concat(variables('ServiceName'),'-sql1')]",
         "SP1Name": "[concat(variables('ServiceName'),'-sp1')]",
         "DC1Disk1Name": "[concat(variables('ServiceName'),'-DC1-os')]",
         "DC1Disk2Name": "[concat(variables('ServiceName'),'-DC1-data')]",
-        "SQL1Disk1Name": "[concat(variables('ServiceName'),'-DC1-os')]",
-        "SQL1Disk2Name": "[concat(variables('ServiceName'),'-DC1-data')]",
         "SP1Disk1Name": "[concat(variables('ServiceName'),'-SP1-os')]",
         "SP1Disk2Name": "[concat(variables('ServiceName'),'-SP1-data1')]",
         "SP1Disk3Name": "[concat(variables('ServiceName'),'-SP1-data2')]",
         "SPPrepareMachineModules": "\"xComputerManagement\",\"xNetworking\",\"xActiveDirectory\",\"xSQLServer_1.2.1.0\"",
         "DCPrepareMachineModules": "\"xComputerManagement\",\"xActiveDirectory\"",
-        "SQLPrepareMachineModules": "\"xComputerManagement\",\"xNetworking\",\"xSqlPs\",\"xActiveDirectory\"",
         "DCImage": "a699494373c04fc0bc8f2bb1389d6106__Windows-Server-2012-R2-201504.01-en.us-127GB.vhd",
-        "SQLImage": "fb83b3509582419d99629ce476bcb5c8__SQL-Server-2014-RTM-12.0.2048.0-Ent-ENU-Win2012R2-cy15su04",
-        "SPImage": "c6e0f177abd8496e934234bd27f46c5d__SharePoint-2013-Trial-7-9-2015",
+        "SPImage": "03f55de797f546a1b29d1b8d66be687a__Visual-Studio-2015-Professional-RC-AzureSDK-2.6-WS2012R2-201505.26",
         "CreateADPrimaryDomainControllerCommand": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\CreateADPrimaryDomainController.ps1 -DomainName \"',parameters('domainName'),'\" -DomainNetBiosName \"',parameters('domainNetBiosName'),'\" -UserName \"',parameters('administratorAccount'),'\" -Password \"',parameters('administratorPassword'), '\" ')]",
+        "CreateSPCommand": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\CreateSPServer.ps1 -DomainName \"',parameters('domainName'),'\" -domainNetBiosName \"',parameters('domainNetBiosName'),'\" -DomainAdministratorUserName \"',parameters('administratorAccount'),'\" -DomainAdministratorPassword \"',parameters('administratorPassword'), '\" -ServiceUserName \"SQLService\" -ServicePassword \"',variables('servicePassword'), '\"')]",
         "SetupSQLCommand": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\SetupSQL.ps1 -DomainNetBiosName \"',parameters('domainNetBiosName'),'\" -SQLServiceAccount \"SQLService\" -SQLServiceAccountPassword \"',variables('servicePassword'), '\" -SQLAgentAccount \"SQLAgent\" -SQLAgentAccountPassword \"',variables('servicePassword'), '\" -SQLDrive  \"F\"  -SetupAccount \"SPSetup\"')]",
+        "SetupSPCommand": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\SetupSP.ps1 -DomainName \"',parameters('domainName'),'\" -domainNetBiosName \"',parameters('domainNetBiosName'),'\" -DomainAdministratorUserName \"',parameters('administratorAccount'),'\" -DomainAdministratorPassword \"',parameters('administratorPassword'), '\" -ServiceUserName \"SQLService\" -ServicePassword \"',variables('servicePassword'), '\"')]",
 
     },
     "resources": [
@@ -96,14 +91,6 @@
             }
         },
         {
-            "type": "Microsoft.ClassicCompute/domainNames",
-            "name": "[variables('SQLDomainName')]",
-            "apiVersion": "2014-06-01",
-            "location": "[parameters('siteLocation')]",
-            "properties": {
-                "label": "[variables('SQLDomainName')]"
-            }
-        },        {
             "type": "Microsoft.ClassicCompute/domainNames",
             "name": "[variables('SPDomainName')]",
             "apiVersion": "2014-06-01",
@@ -230,10 +217,10 @@
                         "parameters": {
                             "public": {
                                 "fileUris": [
-                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/PrepareMachine.ps1",
-                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/xComputerManagement.zip",
-                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/xActiveDirectory.zip",
-                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/xSQLServer_1.2.1.0.zip"
+                                   "https://wwprovisioningfiles.blob.core.windows.net/scripts/PrepareMachine.ps1",
+                                   "https://wwprovisioningfiles.blob.core.windows.net/scripts/xComputerManagement.zip",
+                                   "https://wwprovisioningfiles.blob.core.windows.net/scripts/xActiveDirectory.zip",
+                                   "https://wwprovisioningfiles.blob.core.windows.net/scripts/xSQLServer_1.2.1.0.zip"
                                 ],
                                 "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\PrepareMachine.ps1 -Modules ', variables('DCPrepareMachineModules'),' -Force')]"
                             }
@@ -271,103 +258,135 @@
                 "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('DC1Name'))]"
             ]
         },
-
         {
-            "type": "Microsoft.ClassicCompute/virtualMachines",
-            "name": "[variables('SQL1Name')]",
-            "apiVersion": "2014-06-01",
-            "location": "[parameters('siteLocation')]",
-            "properties": {
-                "domainName": {
-                    "id": "[concat(resourceGroup().id, '/providers/Microsoft.ClassicCompute/domainNames/', variables('SQLDomainName'))]"
-                },
-                "networkProfile": {
-                    "virtualNetwork": {
-                        "id": "[resourceId('Microsoft.ClassicNetwork/virtualNetworks', variables('VNetName'))]",
-                        "subnetNames": [
-                            "Subnet-SP"
-                        ]
-                    },
-                    "inputEndpoints": [
-                        {
-                            "enableDirectServerReturn": "False",
-                            "endpointName": "Remote Desktop",
-                            "privatePort": 3389,
-                            "protocol": "tcp"
-                        },
-                        {
-                            "enableDirectServerReturn": "False",
-                            "endpointName": "Powershell",
-                            "privatePort": 5986,
-                            "protocol": "tcp"
-                        }
+        "type": "Microsoft.ClassicCompute/virtualMachines",
+        "name": "[variables('SP1Name')]",
+        "apiVersion": "2014-06-01",
+        "location": "[parameters('siteLocation')]",
+        "properties": {
+            "domainName": {
+                "id": "[concat(resourceGroup().id, '/providers/Microsoft.ClassicCompute/domainNames/', variables('SPDomainName'))]"
+            },
+            "networkProfile": {
+                "virtualNetwork": {
+                    "id": "[resourceId('Microsoft.ClassicNetwork/virtualNetworks', variables('VNetName'))]",
+                    "subnetNames": [
+                        "Subnet-SP"
                     ]
                 },
-                "hardwareProfile": {
-                    "size": "[variables('SQLHardware')]",
-                    "platformGuestAgent": "true"
-                },
-                "operatingSystemProfile": {
-                    "computerName": "[variables('SQL1Name')]",
-                    "adminUserName": "[parameters('administratorAccount')]",
-                    "adminPassword": "[parameters('administratorPassword')]",
-                    "windowsOperatingSystemProfile": {
-                        "winRMListeners": [
-                            {
-                                "protocol": "Https"
-                            }
-                        ]
-
-                    }
-                },
-                "storageProfile": {
-                    "operatingSystemDisk": {
-                        "diskName": "[variables('SQL1Disk1Name')]",
-                        "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', variables('ServiceName'), variables('SQL1Disk1Name'),'.vhd')]",
-                        "caching": "ReadWrite",
-                        "sourceImageName": "[variables('SQLImage')]"
-                    },
-                    "dataDisks": [
-                        {
-                            "diskName": "[variables('SQL1Disk2Name')]",
-                            "caching": "None",
-                            "diskSize": "120",
-                            "lun": "0",
-                            "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', variables('ServiceName'), variables('SQL1Disk2Name'),'.vhd')]",
-                        }
-                    ]
-
-                },
-                "extensions": [
+                "inputEndpoints": [
                     {
-                        "extension": "BGInfo",
-                        "publisher": "Microsoft.Compute",
-                        "version": "1.*"
+                        "enableDirectServerReturn": "False",
+                        "endpointName": "Remote Desktop",
+                        "privatePort": 3389,
+                        "protocol": "tcp"
                     },
                     {
-                        "extension": "CustomScriptExtension",
-                        "publisher": "Microsoft.Compute",
-                        "version": "1.*",
-                        "parameters": {
-                            "public": {
-                                "fileUris": [
-                                    "https://inteportprovisioning.blob.core.windows.net/scripts/PrepareMachine.ps1",
-                                    "https://inteportprovisioning.blob.core.windows.net/scripts/xComputerManagement.zip",
-                                    "https://inteportprovisioning.blob.core.windows.net/scripts/xNetworking.zip",
-                                    "https://inteportprovisioning.blob.core.windows.net/scripts/xActiveDirectory.zip",
-                                    "https://inteportprovisioning.blob.core.windows.net/scripts/xSqlPs.zip"
-                                ],
-                                "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\PrepareMachine.ps1 -Modules ', variables('SQLPrepareMachineModules'),' -Force')]"
-                            }
-                        }
+                        "enableDirectServerReturn": "False",
+                        "endpointName": "Powershell",
+                        "privatePort": 5986,
+                        "protocol": "tcp"
                     }
                 ]
             },
-            "dependsOn": [
-                "[concat('Microsoft.ClassicCompute/domainNames/', variables('SQLDomainName'))]",
-                "[concat('Microsoft.ClassicNetwork/virtualNetworks/', variables('VNetName'))]",
-                "[concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))]"
+            "hardwareProfile": {
+                "size": "[variables('SPHardware')]",
+                "platformGuestAgent": "true"
+            },
+            "operatingSystemProfile": {
+                "computerName": "[variables('SP1Name')]",
+                "adminUserName": "[parameters('administratorAccount')]",
+                "adminPassword": "[parameters('administratorPassword')]",                   
+                "windowsOperatingSystemProfile": {
+                    "winRMListeners": [
+                        {
+                            "protocol": "Https"
+                        }
+                    ]
 
+                }
+            },
+            "storageProfile": {
+                "operatingSystemDisk": {
+                    "diskName": "[variables('SP1Disk1Name')]",
+                    "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', variables('ServiceName'), variables('SP1Disk1Name'),'.vhd')]",
+                    "caching": "ReadWrite",
+                    "sourceImageName": "[variables('SPImage')]"
+                },
+                "dataDisks": [
+                    {
+                        "diskName": "[variables('SP1Disk2Name')]",
+                        "caching": "None",
+                        "diskSize": "1023",
+                        "lun": "0",
+                        "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', variables('ServiceName'), variables('SP1Disk2Name'),'.vhd')]",
+                    },
+                    {
+                        "diskName": "[variables('SP1Disk3Name')]",
+                        "caching": "None",
+                        "diskSize": "1023",
+                        "lun": "1",
+                        "vhdUri": "[concat(reference(concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))).endpoints[0], 'vhds/', variables('ServiceName'), variables('SP1Disk3Name'),'.vhd')]",
+                    }
+                ]
+
+            },
+            "extensions": [
+                {
+                    "extension": "BGInfo",
+                    "publisher": "Microsoft.Compute",
+                    "version": "1.*"
+                },
+                {
+                    "extension": "CustomScriptExtension",
+                    "publisher": "Microsoft.Compute",
+                    "version": "1.*",
+                    "parameters": {
+                        "public": {
+                            "fileUris":[  
+                                "https://wwprovisioningfiles.blob.core.windows.net/scripts/PrepareMachine.ps1",
+                                "https://wwprovisioningfiles.blob.core.windows.net/scripts/xComputerManagement.zip",
+                                "https://wwprovisioningfiles.blob.core.windows.net/scripts/xNetworking.zip",
+                                "https://wwprovisioningfiles.blob.core.windows.net/scripts/xActiveDirectory.zip",
+                                "https://wwprovisioningfiles.blob.core.windows.net/scripts/xSQLServer_1.2.1.0.zip"
+                            ],
+                            "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\PrepareMachine.ps1 -Modules ', variables('SPPrepareMachineModules'),' -Force')]"
+                        }
+                    }
+                }
+
+            ]
+        },
+        "dependsOn": [
+            "[concat('Microsoft.ClassicCompute/domainNames/', variables('SPDomainName'))]",
+            "[concat('Microsoft.ClassicNetwork/virtualNetworks/', variables('VNetName'))]",
+            "[concat('Microsoft.ClassicStorage/storageAccounts/', variables('StorageName'))]"
+        ]
+    },
+        {
+            "type": "Microsoft.ClassicCompute/virtualMachines/extensions",
+            "properties": {
+                "extension": "CustomScriptExtension",
+                "publisher": "Microsoft.Compute",
+                "version": "1.*",
+                "parameters": {
+                    "public": {
+                        "fileUris": [
+                            "https://wwprovisioningfiles.blob.core.windows.net/scripts/Common.ps1",
+                            "https://wwprovisioningfiles.blob.core.windows.net/scripts/CreateSPServer.ps1",
+                            "https://wwprovisioningfiles.blob.core.windows.net/scripts/xComputerManagement.zip",
+                            "https://wwprovisioningfiles.blob.core.windows.net/scripts/xSqlPs.zip"
+                        ],
+                        "commandToExecute": "[variables('CreateSPCommand')]"
+                    }
+                }
+            },
+            "apiVersion": "2014-06-01",
+            "name": "[concat(variables('SP1Name'),'/CreateSPCommand')]",
+            "location": "[parameters('siteLocation')]",
+            "dependsOn": [
+                "[concat('Microsoft.ClassicCompute/virtualMachines/',variables('DC1Name'),'/extensions/CreateADPrimaryDomainControllerCustomScript')]",
+                "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('SP1Name'))]"
             ]
         },
         {
@@ -379,19 +398,19 @@
                 "parameters": {
                     "public": {
                         "fileUris": [
-                            "https://azuregalleryassetsch.blob.core.windows.net/microsoft-sharepoint-sql-0-3-0-preview/Common.ps1",
-                            "https://azuregalleryassetsch.blob.core.windows.net/microsoft-sharepoint-sql-0-3-0-preview/CreateSqlServer.ps1"
+                            "https://wwprovisioningfiles.blob.core.windows.net/scripts/Common.ps1",
+                            "https://wwprovisioningfiles.blob.core.windows.net/scripts/SetupSP.ps1",
+                            "https://wwprovisioningfiles.blob.core.windows.net/scripts/ConfigureSharePointFarmInDomain.ps1"
                         ],
-                        "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\CreateSqlServer.ps1 -DomainName \"',parameters('domainName'),'\" -DomainNetBiosName \"',parameters('domainNetBiosName'),'\" -DomainAdministratorUserName \"',parameters('administratorAccount'),'\" -DomainAdministratorPassword \"',parameters('administratorPassword'),'\" -SqlServerServiceAccountPassword \"',parameters('administratorPassword'),'\" -SharePointSetupUserAccountPassword \"',parameters('administratorPassword'),'\" ')]"
+                        "commandToExecute": "[variables('SetupSPCommand')]"
                     }
                 }
             },
             "apiVersion": "2014-06-01",
-            "name": "[concat(variables('SQL1Name'),'/CreateSQLCommand')]",
             "location": "[parameters('siteLocation')]",
+            "name": "[concat(variables('SP1Name'),'/SetupSPCommand')]",
             "dependsOn": [
-                "[concat('Microsoft.ClassicCompute/virtualMachines/',variables('DC1Name'),'/extensions/CreateADPrimaryDomainControllerCustomScript')]",
-                "[resourceId('Microsoft.ClassicCompute/virtualMachines', variables('SQL1Name'))]"
+                "[concat('Microsoft.ClassicCompute/virtualMachines/',variables('SP1Name'),'/extensions/CreateSPCommand')]"
             ]
         }
     ]
