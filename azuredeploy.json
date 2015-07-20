@@ -356,7 +356,8 @@
                                     "https://inteportprovisioning.blob.core.windows.net/scripts/xComputerManagement.zip",
                                     "https://inteportprovisioning.blob.core.windows.net/scripts/xNetworking.zip",
                                     "https://inteportprovisioning.blob.core.windows.net/scripts/xActiveDirectory.zip",
-                                    "https://inteportprovisioning.blob.core.windows.net/scripts/xSqlPs.zip"
+                                    "https://inteportprovisioning.blob.core.windows.net/scripts/xSqlPs.zip",
+                                    "https://inteportprovisioning.blob.core.windows.net/scripts/xSQLServer.zip"
                                 ],
                                 "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\PrepareMachine.ps1 -Modules ', variables('SQLPrepareMachineModules'),' -Force')]"
                             }
