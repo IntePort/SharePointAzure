@@ -522,7 +522,7 @@
                             "https://azuregalleryassetsch.blob.core.windows.net/microsoft-sharepoint-sql-0-3-0-preview/SharePointServer.psm1"
                         ],
                         
-                        "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\CreateSharePointServer.ps1 -DomainName \"',parameters('domainName'),'\" -DomainAdministratorUserName \"',parameters('administratorAccount'),'\" -DomainAdministratorPassword \"',parameters('administratorPassword'),'\" -DatabaseServer \"',variables('SQL1Name'),'\" -SetupUserAccountPassword \"',parameters('administratorPassword'),'\" -FarmAccountPassword \"',parameters('administratorPassword'),'\" -FarmPassphrase \"',parameters('administratorPassword'),'\" -Configuration \"',parameters('domainName'),'\"')]" 
+                        "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\CreateSharePointServer.ps1 -DomainName \"',parameters('domainName'),'\" -DomainAdministratorUserName \"',parameters('administratorAccount'),'\" -DomainAdministratorPassword \"',parameters('administratorPassword'),'\" -DatabaseServer \"',variables('SQL1Name'),'\" -SetupUserAccountPassword \"',parameters('administratorPassword'),'\" -FarmAccountPassword \"',parameters('administratorPassword'),'\" -FarmPassphrase \"',parameters('administratorPassword'),'\" -Configuration \"',variables('SPFarmConfig'),'\"')]" 
                     }
                 }
             },
