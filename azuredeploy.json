@@ -235,7 +235,6 @@
                                     "https://wwprovisioningfiles.blob.core.windows.net/scripts/PrepareMachine.ps1",
                                     "https://wwprovisioningfiles.blob.core.windows.net/scripts/xComputerManagement.zip",
                                     "https://wwprovisioningfiles.blob.core.windows.net/scripts/xActiveDirectory.zip",
-                                    "https://wwprovisioningfiles.blob.core.windows.net/scripts/xSQLServer_1.2.1.0.zip"
                                 ],
                                 "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command .\\PrepareMachine.ps1 -Modules ', variables('DCPrepareMachineModules'),' -Force')]"
                             }
